@@ -5,67 +5,67 @@
  */
 
 #include "rdict.h"
+#include <stdio.h>
+#include <stdlib.h> /* getenv, exit */
+#include <signal.h>
 
-#define	MAXWORD	50		/* maximum length of a command or word	*/
-#define DICTSIZ 100		/* maximum number of entries in diction.*/
 int	nwords = 0;		/* number of words in the dictionary	*/
 char	dict[DICTSIZ][MAXWORD+1];/* storage for a dictionary of words	*/
 
 int *
 initw_1_svc(void *argp, struct svc_req *rqstp)
 {
-	static int  result = 1;
-
-	/*
-	 * insert server code here
-	 */
-
-	return &result;
+	static int  result;
+	nwords = 0;
+	result = 1;
+	return (&result);
 }
 
 int *
 insertw_1_svc(char **argp, struct svc_req *rqstp)
 {
-	static int  result;
+		static int  result;
+	char *word;
 
-	strcpy(dict[nwords], argp);
+	word = *argp;
+	strcpy(dict[nwords], word);
 	nwords++;
 	result = nwords;
-
-	return &result;
+	return (&result);
 }
 
 int *
 deletew_1_svc(char **argp, struct svc_req *rqstp)
 {
 	static int  result;
+	char *word;
+	int i;
 
-	int	i;
-
+	word = *argp;
 	for (i=0 ; i<nwords ; i++)
-		if (strcmp(argp, dict[i]) == 0) {
+		if (strcmp(word, dict[i]) == 0) {
 			nwords--;
 			strcpy(dict[i], dict[nwords]);
 			result = 1;
-			return &result;
+			return (&result);
 		}
 	result = 0;
-
-	return &result;
+	return (&result);
 }
 
 int *
 lookupw_1_svc(char **argp, struct svc_req *rqstp)
 {
 	static int  result;
+	char *word;
+	int i;
 
-	int	i;
-
+	word = *argp;
 	for (i=0 ; i<nwords ; i++)
-		if (strcmp(argp, dict[i]) == 0)
-			result = 1; return &result;
-
+		if (strcmp(word, dict[i]) == 0) {
+			result = 1;
+			return (&result);
+		}
 	result = 0;
-
-	return &result;
+	return (&result);
 }
